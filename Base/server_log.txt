@@ -1,0 +1,71 @@
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:11:59] filterscripts = ""  (string)
+[14:11:59] 
+[14:11:59] Server Plugins
+[14:11:59] --------------
+[14:11:59]  Loaded 0 plugins.
+
+[14:11:59] 
+[14:11:59] Filterscripts
+[14:11:59] ---------------
+[14:11:59]   Loaded 0 filterscripts.
+
+[14:11:59] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:13:57] filterscripts = ""  (string)
+[14:13:57] 
+[14:13:57] Server Plugins
+[14:13:57] --------------
+[14:13:57]  Loaded 0 plugins.
+
+[14:13:57] 
+[14:13:57] Filterscripts
+[14:13:57] ---------------
+[14:13:57]   Loaded 0 filterscripts.
+
+[14:13:57] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:15:00] filterscripts = ""  (string)
+[14:15:00] 
+[14:15:00] Server Plugins
+[14:15:00] --------------
+[14:15:00]  Loaded 0 plugins.
+
+[14:15:00] 
+[14:15:00] Filterscripts
+[14:15:00] ---------------
+[14:15:00]   Loaded 0 filterscripts.
+
+[14:15:00] Number of vehicle models: 0
+[14:16:42] [connection] 127.0.0.1:51970 requests connection cookie.
+[14:16:43] [connection] incoming connection: 127.0.0.1:51970 id: 0
+[14:16:43] [join] Joao has joined the server (0:127.0.0.1)
+[14:17:45] [part] maook has left the server (0:1)
+[14:18:24] [connection] 127.0.0.1:54030 requests connection cookie.
+[14:18:25] [connection] incoming connection: 127.0.0.1:54030 id: 0
+[14:18:25] [join] maook has joined the server (0:127.0.0.1)
+[14:19:04] [part] maook has left the server (0:1)
