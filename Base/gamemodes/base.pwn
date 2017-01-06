@@ -178,7 +178,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			DOF2_SetString(Conta, "Senha", inputtext);
 			DOF2_SaveFile();
-			format(String01, sizeof(String01), "{12FF05}Sua nova senha é {25E01B}'%s' tire um print para n esquecer apertando [f8]", inputtext);
+			format(String01, sizeof(String01), "{12FF05}Sua nova senha Ã© {25E01B}'%s' tire um print para n esquecer apertando [f8]", inputtext);
 			SendClientMessage(playerid, -1, String01);
 		}
 		else
@@ -197,7 +197,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				ShowPlayerDialog(playerid, DIALOG_SKIN, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de skin, digite-a abaixo.", "Mudar", "Voltar");
 			}
 			new String01[128];
-			format(String01, sizeof(String01), "Você colocou a Skin Número %i", strval(inputtext));
+			format(String01, sizeof(String01), "VocÃª colocou a Skin NÃºmero %i", strval(inputtext));
 			SendClientMessage(playerid, -1, String01);
 			
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));		
@@ -223,7 +223,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			new String01[128];
-			format(String01, sizeof(String01), "Você colocou %i de Score", strval(inputtext));
+			format(String01, sizeof(String01), "VocÃª colocou %i de Score", strval(inputtext));
 			SendClientMessage(playerid, -1, String01);
 			DOF2_SetString(Conta, "Score", inputtext);
 			DOF2_SaveFile();
@@ -246,7 +246,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			}
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			new String01[128];
-			format(String01, sizeof(String01), "Você colocou %iR$ na sua conta", strval(inputtext));
+			format(String01, sizeof(String01), "VocÃª colocou %iR$ na sua conta", strval(inputtext));
 			SendClientMessage(playerid, -1, String01);
 			DOF2_SetString(Conta, "Dinheiro", inputtext);
 			DOF2_SaveFile();
@@ -335,7 +335,7 @@ CMD:score(playerid)
 
 CMD:dinheiro(playerid)
 {
-	return ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de Score, digite-a abaixo.", "Mudar", "Voltar");
+	return ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar dinheiro", "para dar dinheiro pra vc, digite-a abaixo.", "Mudar", "Voltar");
 }
 
 CMD:rg(playerid)
@@ -367,7 +367,7 @@ CMD:viraradmin(playerid)
 
 CMD:adm(playerid)
 {
-	if(Dados[playerid][pAdmin] == 0) return SendClientMessage(playerid, -1, "Você não é admin");
-	SendClientMessage(playerid, -1, "Confimado! Você é ilu.. ");
+	if(Dados[playerid][pAdmin] == 0) return SendClientMessage(playerid, -1, "VocÃª nÃ£o Ã© admin");
+	SendClientMessage(playerid, -1, "Confimado! VocÃª Ã© ilu.. ");
 	return SendClientMessage(playerid, -1, " Admin* ");
 }
