@@ -9,12 +9,12 @@ Conta Forum: http://forum.sa-mp.com/member.php?u=288140
 
 #define 	DarMoney(%0,%1) ResetPlayerMoney(%0) && GivePlayerMoney(%0,%1)
 //======================================[ DIALOGOS ]====================================||
-#define 	DIALOG_REGISTRO      	0
-#define 	DIALOG_LOGIN         	1
+#define 	DIALOG_REGISTRO      		0
+#define 	DIALOG_LOGIN         		1
 
-#define 	DIALOG_NICK				2
+#define 	DIALOG_NICK			2
 #define		DIALOG_SENHA			3
-#define		DIALOG_SKIN				4
+#define		DIALOG_SKIN			4
 #define 	DIALOG_SCORE			5
 #define 	DIALOG_DINHEIRO			6
 //======================================[ INICIO ]======================================||
@@ -38,8 +38,8 @@ new Conta[256];
 //=====================================[ CALLBACKS ]====================================||
 public OnGameModeInit()
 {
-  SetGameModeText("Modo livre");
-  UsePlayerPedAnims();																
+	SetGameModeText("Modo livre");
+	UsePlayerPedAnims();																
 	return  1;
 }
 
@@ -91,13 +91,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	//=================================[ DIALOG_REGISTRO ]==============================||
 	if(dialogid == DIALOG_REGISTRO)
 	{
-	    if(response)
-	    {
-	        if(!strlen(inputtext))
-	        {
-	            ShowPlayerDialog(playerid, DIALOG_REGISTRO, DIALOG_STYLE_INPUT, "Registro", "Digite Sua Senha Para Se Registrar!", "Registrar", "Sair");
-	            return 1;
-			}
+		if(response)
+		{
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_REGISTRO, DIALOG_STYLE_INPUT, "Registro", "Digite Sua Senha Para Se Registrar!", "Registrar", "Sair");
+			
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			DOF2_CreateFile(Conta);
 			DOF2_SetString(Conta, "Senha", inputtext);
@@ -109,26 +106,21 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		}
 		else
 		{
-			Kick(playerid);
-			return 1;
+			return Kick(playerid);
 		}
 	}
 	//=================================[ DIALOGO   LOGIN ]==============================||
 	if(dialogid == DIALOG_LOGIN)
 	{
-	    if(response)
-	    {
-	        if(!strlen(inputtext))
-	        {
-	            ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "REGISTRO", "Registrar no servidor", "Entrar", "Sair");
-	            return 1;
-			}
+		if(response)
+	    	{
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "LOGIN", "Logar", "Conectar", "Sair");
+			
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			if(strcmp(inputtext, DOF2_GetString(Conta, "Senha"), true))
 			{
-                ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "LOGIN", "Entrar no servidor","Entrar", "Sair");
-                SendClientMessage(playerid, -1, "Senha incorreta!");
-				return 1;
+				ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "LOGIN", "Entrar no servidor","Entrar", "Sair");
+               			return SendClientMessage(playerid, -1, "Senha incorreta!");
 			}
 			else //se conseguir logar
 			{
@@ -138,8 +130,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		}
 		else
 		{
-			Kick(playerid);
-			return 1;
+			return Kick(playerid);
 		}
 	}
 	//=================================[ DIALOGO    NICK ]==============================||
@@ -147,10 +138,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(response)
 		{
-			if(!strlen(inputtext))
-			{
-				ShowPlayerDialog(playerid, DIALOG_NICK, DIALOG_STYLE_INPUT, "Mudar Nick", "para mudar de nick, digite-a abaixo.", "Mudar", "Voltar");
-			}
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_NICK, DIALOG_STYLE_INPUT, "Mudar Nick", "para mudar de nick, digite-a abaixo.", "Mudar", "Voltar");
+			
 			new String01[54], king[60],kingold[60];
 			format(kingold, sizeof(kingold), "Contas/%s.ini",Nome(playerid));
 			format(String01, sizeof(String01), "O Jogado %s, mudou seu nick para %s", Nome(playerid),inputtext);
@@ -170,10 +159,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(response)
 		{
-			if(!strlen(inputtext))
-			{
-				ShowPlayerDialog(playerid, DIALOG_SENHA, DIALOG_STYLE_INPUT, "Mudar Senha", "para mudar de senha, digite-a abaixo.", "Mudar", "Voltar");
-			}
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_SENHA, DIALOG_STYLE_INPUT, "Mudar Senha", "para mudar de senha, digite-a abaixo.", "Mudar", "Voltar");
+			
 			new String01[128];
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			DOF2_SetString(Conta, "Senha", inputtext);
@@ -192,10 +179,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(response)
 		{
-			if(!strlen(inputtext))
-			{
-				ShowPlayerDialog(playerid, DIALOG_SKIN, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de skin, digite-a abaixo.", "Mudar", "Voltar");
-			}
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_SKIN, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de skin, digite-a abaixo.", "Mudar", "Voltar");
+			
 			new String01[128];
 			format(String01, sizeof(String01), "Você colocou a Skin Número %i", strval(inputtext));
 			SendClientMessage(playerid, -1, String01);
@@ -217,10 +202,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(response)
 		{
-			if(!strlen(inputtext))
-			{
-				ShowPlayerDialog(playerid, DIALOG_SCORE, DIALOG_STYLE_INPUT, "Mudar Score", "para mudar de score, digite-a abaixo.", "Mudar", "Voltar");
-			}
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_SCORE, DIALOG_STYLE_INPUT, "Mudar Score", "para mudar de score, digite-a abaixo.", "Mudar", "Voltar");
+			
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			new String01[128];
 			format(String01, sizeof(String01), "Você colocou %i de Score", strval(inputtext));
@@ -240,10 +223,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if(response)
 		{
-			if(!strlen(inputtext))
-			{
-				ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar Dinheiro", "para mudar de dinheiro, digite-a abaixo.", "Mudar", "Voltar");
-			}
+			if(!strlen(inputtext)) return ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar Dinheiro", "para mudar de dinheiro, digite-a abaixo.", "Mudar", "Voltar");
+			
 			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
 			new String01[128];
 			format(String01, sizeof(String01), "Você colocou %iR$ na sua conta", strval(inputtext));
@@ -359,10 +340,11 @@ CMD:rg(playerid)
 
 CMD:viraradmin(playerid)
 {
+	if(Dados[playerid][pAdmin] == 1) return SendClientMessage(playerid, -1, "Você já é admin");
 	Dados[playerid][pAdmin] = 1;
 	DOF2_SetInt(Conta, "Admin", Dados[playerid][pAdmin]);
 	DOF2_SaveFile();
-	return 1;
+	return SendClientMessage(playerid, -1, "Você virou admin nivel 1 :)");
 }
 
 CMD:adm(playerid)
