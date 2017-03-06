@@ -2,7 +2,6 @@
 Creditos: Pedro_Eduardo
 
 Conta Forum: http://forum.sa-mp.com/member.php?u=288140
-
 Tópico : http://forum.sa-mp.com/showthread.php?t=625795
 
 # Comandos
@@ -12,8 +11,8 @@ Tópico : http://forum.sa-mp.com/showthread.php?t=625795
   /Score
   /Skin
   /DarAdmin
-  /Adm
-  /RG
+  /LimparChat
+  /Kill
 
 # Salvando
-Nome , Senha, Skin, Score, Dinheiro, Admin, Ultima Posição e Interior
+Nome , Senha, Skin, Score, Dinheiro, Admin, Angulo, Ultima Posição, Interior e Virtual World
