@@ -1,0 +1,423 @@
+/* GameMode Base DOF2 v1.0
+Creditos: Pedro_Eduardo
+Conta Forum: http://forum.sa-mp.com/member.php?u=288140
+*/
+//======================================[ INCLUDES ]====================================||
+#include 	a_samp
+#include 	DOF2
+#include	zcmd
+//======================================[ DEFINES ]====================================||
+#undef		MAX_PLAYERS
+#define		MAX_PLAYERS		50
+
+#define 	DarMoney(%0,%1) ResetPlayerMoney(%0) && GivePlayerMoney(%0,%1)
+//======================================[ DIALOGOS ]====================================||
+#define 	DIALOG_REGISTRO      	0
+#define 	DIALOG_LOGIN         	1
+
+#define 	DIALOG_NICK				2
+#define		DIALOG_SENHA			3
+#define		DIALOG_SKIN				4
+#define 	DIALOG_SCORE			5
+#define 	DIALOG_DINHEIRO			6
+//======================================[ INICIO ]======================================||
+main(){}
+
+enum pInfo
+{
+	pAdmin,
+	pSkin,
+	pScore,
+	pDinheiro,
+	Float:pPosX,
+	Float:pPosY,
+	Float:pPosZ,
+	Float:pPosA,
+	pInterior,
+	pVW,
+	bool:pLogado
+}
+
+new Dados[MAX_PLAYERS][pInfo],reset[pInfo];
+new Conta[256];
+
+//=====================================[ CALLBACKS ]====================================||
+public OnGameModeInit()
+{
+	SetGameModeText("by KinG7");
+    UsePlayerPedAnims();
+	ShowPlayerMarkers(PLAYER_MARKERS_MODE_STREAMED);
+	ShowNameTags(1);
+	SetNameTagDrawDistance(100.0);
+	return  1;
+}
+
+public OnGameModeExit()
+{
+	DOF2_Exit();
+	return 1;
+}
+
+ResetEnum(playerid)
+{
+	Dados[playerid] = reset;
+}
+
+public OnPlayerRequestClass(playerid, classid)
+{
+	IsPlayerLogged(playerid);
+	return false;
+}
+
+public OnPlayerRequestSpawn(playerid) return IsPlayerLogged(playerid);
+
+IsPlayerLogged(playerid)
+{
+	if(Dados[playerid][pLogado] == true)
+	{
+		SetSpawnInfo(playerid,-1,Dados[playerid][pSkin],Dados[playerid][pPosX],Dados[playerid][pPosY],Dados[playerid][pPosZ],Dados[playerid][pPosA],0,0,0,0,0,0);
+		SpawnPlayer(playerid);
+		SetPlayerInterior(playerid, 0);
+		SetCameraBehindPlayer(playerid);
+	}
+	return 1;
+}
+
+public OnPlayerDeath(playerid, killerid, reason)
+{
+	Dados[playerid][pPosX]=2034.1435;
+	Dados[playerid][pPosY]=-1402.1190;
+	Dados[playerid][pPosZ]=16.6299;
+	Dados[playerid][pPosA]=90.0;
+	return 1;
+}
+
+public OnPlayerText(playerid, text[ ])
+{
+	if(Dados[playerid][pLogado] == false)
+	{
+		SendClientMessage(playerid,-1,"Você não está logado.");
+		return 0;
+	}
+	if(strlen(text) > 90)
+	{
+		SendClientMessage(playerid,-1,"Não digite um texto muito grande!");
+		return 0;
+	}
+	return 1;
+}
+
+public OnPlayerConnect(playerid)
+{
+	Dados[playerid][pLogado]=false;
+	//=================================[ LOGIN/REGISTRO ]===============================||
+	format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+	if(!DOF2_FileExists(Conta))
+	{
+		ShowPlayerDialog(playerid, DIALOG_REGISTRO, DIALOG_STYLE_INPUT, "REGISTRO", "Registrar!", "Registrar", "Sair");
+	}
+	else
+	{
+		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "LOGIN", "Logar", "Conectar", "Sair");
+	}
+	//==================================================================================||
+	return 1;
+}
+
+public OnPlayerDisconnect(playerid, reason)
+{
+	//=================================[ SALVANDO CONTAS ]==============================||
+	format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+	DOF2_SetInt(Conta, "Admin", Dados[playerid][pAdmin]);
+	DOF2_SetInt(Conta, "Skin", Dados[playerid][pSkin]);
+	DOF2_SetInt(Conta, "Dinheiro", GetPlayerMoney(playerid));
+	DOF2_SetInt(Conta, "Score", GetPlayerScore(playerid));
+	
+	new Float:X, Float:Y, Float:Z, Float:A;
+	GetPlayerPos(playerid, Float:X, Float:Y, Float:Z);
+	GetPlayerFacingAngle(playerid,Float:A);
+	DOF2_SetFloat(Conta, "PosX", X);
+	DOF2_SetFloat(Conta, "PosY", Y);
+	DOF2_SetFloat(Conta, "PosZ", Z);
+	DOF2_SetFloat(Conta, "PosA", A);
+	DOF2_SetInt(Conta, "Interior", GetPlayerInterior(playerid));
+	DOF2_SetInt(Conta, "VW", GetPlayerVirtualWorld(playerid));
+	
+	DOF2_SaveFile();
+	//==================================================================================||
+	ResetEnum(playerid);
+	return 1;
+}
+
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	//=================================[ DIALOG_REGISTRO ]==============================||
+	if(dialogid == DIALOG_REGISTRO)
+	{
+		if(!response) return Kick(playerid);
+		if(strlen(inputtext) < 4) return ShowPlayerDialog(playerid, DIALOG_REGISTRO, DIALOG_STYLE_INPUT, "Registro", "Digite Sua Senha Para Se Registrar!", "Registrar", "Sair");
+	    if(response)
+	    {
+			if(strlen(inputtext))
+			{		
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+				DOF2_CreateFile(Conta);
+				DOF2_SetString(Conta, "Senha", inputtext);
+				DOF2_SaveFile();
+			
+				CriarConta(playerid);
+				CarregarConta(playerid);
+			}
+			else return ShowPlayerDialog(playerid, DIALOG_REGISTRO, DIALOG_STYLE_INPUT, "Registro", "Digite Sua Senha Para Se Registrar!", "Registrar", "Sair");
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO   LOGIN ]==============================||
+	if(dialogid == DIALOG_LOGIN)
+	{
+		if(!response) return Kick(playerid);
+	    if(response)
+	    {
+	        if(!strlen(inputtext))
+	        {
+	            return ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "LOGIN", "Entrar no servidor","Entrar", "Sair");
+			}
+			format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+			if(strcmp(inputtext, DOF2_GetString(Conta, "Senha"), true))
+			{
+                ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "LOGIN", "Entrar no servidor","Entrar", "Sair");
+                return SendClientMessage(playerid, -1, "Senha incorreta!");
+			}
+			else //se conseguir logar
+			{
+				return CarregarConta(playerid);
+			}
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO    NICK ]==============================||
+	if(dialogid == DIALOG_NICK)
+	{
+		if(!response) return 0;
+		if(response)
+		{
+			if(!strlen(inputtext))
+			{
+				return ShowPlayerDialog(playerid, DIALOG_NICK, DIALOG_STYLE_INPUT, "Mudar Nick", "para mudar de nick, digite-a abaixo.", "Mudar", "Voltar");
+			}
+			else
+			{
+				new String01[100], KinG[40];
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+				format(String01, sizeof(String01), "O Jogado %s, mudou seu nick para %s", Nome(playerid),inputtext);
+				SendClientMessageToAll( -1, String01);
+				format(KinG, sizeof(KinG), "Contas/%s.ini", inputtext);
+				DOF2_RenameFile(Conta, KinG);
+				return SetPlayerName(playerid, inputtext);
+			}
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO   SENHA ]==============================||
+	if(dialogid == DIALOG_SENHA)
+	{
+		if(!response) return 0;
+		if(response)
+		{
+			if(!strlen(inputtext))
+			{
+				return ShowPlayerDialog(playerid, DIALOG_SENHA, DIALOG_STYLE_INPUT, "Mudar Senha", "para mudar de senha, digite-a abaixo.", "Mudar", "Voltar");
+			}
+			else
+			{
+				new String01[100];
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+				DOF2_SetString(Conta, "Senha", inputtext);
+				DOF2_SaveFile();
+				format(String01, sizeof(String01), "{12FF05}Sua nova senha é {25E01B}'%s' tire um print para n esquecer apertando [f8]", inputtext);
+				return SendClientMessage(playerid, -1, String01);
+			}
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO    SKIN ]==============================||
+	if(dialogid == DIALOG_SKIN)
+	{
+		if(!response) return 0;
+		if(response)
+		{
+			if(!strlen(inputtext))
+			{
+				return ShowPlayerDialog(playerid, DIALOG_SKIN, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de skin, digite-a abaixo.", "Mudar", "Voltar");
+			}
+			else
+			{
+				new String01[35];
+				format(String01, sizeof(String01), "Você colocou a Skin Número %d", strval(inputtext));
+				SendClientMessage(playerid, -1, String01);
+				
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));		
+				Dados[playerid][pSkin] = strval(inputtext);	
+				DOF2_SetInt(Conta, "Skin", Dados[playerid][pSkin]);
+				DOF2_SaveFile();
+				return SetPlayerSkin(playerid,strval(inputtext));
+			}
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO    SCORE ]==============================||
+	if(dialogid == DIALOG_SCORE)
+	{
+		if(!response) return 0;
+		if(response)
+		{
+			if(!strlen(inputtext))
+			{
+				return ShowPlayerDialog(playerid, DIALOG_SCORE, DIALOG_STYLE_INPUT, "Mudar Score", "para mudar de score, digite-a abaixo.", "Mudar", "Voltar");
+			}
+			else
+			{
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+				new String01[35];
+				format(String01, sizeof(String01), "Você colocou %d de Score", strval(inputtext));
+				SendClientMessage(playerid, -1, String01);
+				DOF2_SetString(Conta, "Score", inputtext);
+				DOF2_SaveFile();
+				return SetPlayerScore(playerid,strval(inputtext));
+			}
+		}
+		return 1;
+	}
+	//=================================[ DIALOGO    DINHEIRO ]==============================||
+	if(dialogid == DIALOG_DINHEIRO)
+	{
+		if(!response) return 0;
+		if(response)
+		{
+			if(!strlen(inputtext))
+			{
+				return ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar Dinheiro", "para mudar de dinheiro, digite-a abaixo.", "Mudar", "Voltar");
+			}
+			else
+			{
+				format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+				new String01[35];
+				format(String01, sizeof(String01), "Você colocou %d R$ na sua conta", strval(inputtext));
+				SendClientMessage(playerid, -1, String01);
+				Dados[playerid][pDinheiro]=strval(inputtext);
+				DOF2_SetString(Conta, "Dinheiro", inputtext);
+				DOF2_SaveFile();
+				return DarMoney(playerid,strval(inputtext));
+			}
+		}
+		return 1;
+	}
+	return 1;
+}
+
+public OnPlayerSpawn(playerid)
+{
+	SetPlayerSkin(playerid, Dados[playerid][pSkin]);
+	DarMoney(playerid,Dados[playerid][pDinheiro]);
+	TogglePlayerControllable(playerid,true);
+	return 1;
+}
+
+//=====================================================================================||
+
+CriarConta(playerid)
+{
+	format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+	
+	DOF2_SetInt(Conta, "Admin", 0);
+	DOF2_SetInt(Conta, "Skin", 98);
+	DOF2_SetInt(Conta, "Dinheiro", 500);
+	DOF2_SetInt(Conta, "Score", 0);
+	DOF2_SetFloat(Conta, "PosX", 2069.8767);
+	DOF2_SetFloat(Conta, "PosY", -1766.6870);
+	DOF2_SetFloat(Conta, "PosZ", 13.5621);
+	DOF2_SetFloat(Conta, "PosA", 90.0);
+	DOF2_SetInt(Conta, "Interior", 0);
+	DOF2_SetInt(Conta, "VW", 0);
+	
+	DOF2_SaveFile();
+}
+
+CarregarConta(playerid)
+{
+	format(Conta, sizeof(Conta), "Contas/%s.ini", Nome(playerid));
+	
+	Dados[playerid][pAdmin] = DOF2_GetInt(Conta, "Admin");
+	Dados[playerid][pSkin] = DOF2_GetInt(Conta, "Skin");
+	Dados[playerid][pDinheiro] = DOF2_GetInt(Conta, "Dinheiro");
+	Dados[playerid][pScore] = DOF2_GetInt(Conta, "Score");
+	Dados[playerid][pPosX] = DOF2_GetInt(Conta, "PosX");
+	Dados[playerid][pPosY] = DOF2_GetInt(Conta, "PosY");
+	Dados[playerid][pPosZ] = DOF2_GetInt(Conta, "PosZ");
+	Dados[playerid][pPosA] = DOF2_GetInt(Conta, "PosA");
+	Dados[playerid][pInterior] = DOF2_GetInt(Conta, "Interior");
+	Dados[playerid][pVW] = DOF2_GetInt(Conta, "VW");
+	Dados[playerid][pLogado]=true;
+	
+	SetPlayerScore(playerid, Dados[playerid][pScore]);
+	DarMoney(playerid, Dados[playerid][pDinheiro]);
+	SetPlayerInterior(playerid, Dados[playerid][pInterior]);
+	SetSpawnInfo(playerid, -1, Dados[playerid][pSkin], Dados[playerid][pPosX], Dados[playerid][pPosY], Dados[playerid][pPosZ], Dados[playerid][pPosA],0,0,0,0,0,0);
+	SpawnPlayer(playerid);
+	SetPlayerVirtualWorld(playerid, Dados[playerid][pVW]);
+	return 1;
+}
+
+Nome(playerid)
+{
+	new pNome[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, pNome, 24);
+	return pNome;
+}
+
+//=============================[Comandos]==============================================||
+
+CMD:mudarsenha(playerid)
+{
+	return ShowPlayerDialog(playerid, DIALOG_SENHA, DIALOG_STYLE_INPUT, "Mudar Senha", "para mudar de senha, digite-a abaixo.", "Mudar", "Voltar");
+}
+
+CMD:mudarnick(playerid)
+{
+	return ShowPlayerDialog(playerid, DIALOG_NICK, DIALOG_STYLE_INPUT, "Mudar Nick", "para mudar de nick, digite-a abaixo.", "Mudar", "Voltar");
+}
+
+CMD:skin(playerid)
+{
+	return ShowPlayerDialog(playerid, DIALOG_SKIN, DIALOG_STYLE_INPUT, "Mudar Skin", "para mudar de skin, digite-a abaixo.", "Mudar", "Voltar");
+}
+
+CMD:score(playerid)
+{
+	return ShowPlayerDialog(playerid, DIALOG_SCORE, DIALOG_STYLE_INPUT, "Mudar Score", "para mudar de Score, digite-a abaixo.", "Mudar", "Voltar");
+}
+
+CMD:dinheiro(playerid)
+{
+	return ShowPlayerDialog(playerid, DIALOG_DINHEIRO, DIALOG_STYLE_INPUT, "Mudar dinheiro", "para dar dinheiro pra vc, digite-a abaixo.", "Mudar", "Voltar");
+}
+
+CMD:viraradmin(playerid)
+{
+	Dados[playerid][pAdmin] = 1;
+	DOF2_SetInt(Conta, "Admin", Dados[playerid][pAdmin]);
+	DOF2_SaveFile();
+	return 1;
+}
+
+CMD:limparchat(playerid)
+{
+	if(Dados[playerid][pAdmin] == 0) return SendClientMessage(playerid, -1, "Você não é admin!");
+	for(new i = 0; i < 50; i++)
+    {
+    	SendClientMessage(playerid, -1,"");
+    }
+	return 1;
+}
+
+CMD:kill(playerid) return SetPlayerHealth(playerid,0.0);
